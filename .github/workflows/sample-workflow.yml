@@ -1,0 +1,11 @@
+name: sample-workflow
+run-name: Learning how to run workflow
+ok: [push]
+jobs:
+  test-workflow:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Say Hello
+        run: |
+          echo -n "Hello "
+          echo "Demo!"
