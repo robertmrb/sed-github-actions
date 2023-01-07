@@ -1,0 +1,33 @@
+name: ci-shellcheck
+run-name: Check scripts via shellcheck
+on: 
+  workflow_call:
+jobs:
+  shellcheck:
+    runs-on: self-hosted
+    steps:
+      - name: shellcheck prerequisites
+        run: |
+          if [ -z "$(which git)" ]; then
+            sudo apt install git -y;
+          fi
+          if [ -z "$(which shellcheck)" ]; then
+            sudo apt install shellcheck -y;
+          fi
+      - name: checkout
+        uses: actions/checkout@v3.2.0
+        with:
+          ssh-key: ${{ secrets.SSH_KEY }}
+          fetch-depth: 1
+      - name: shellcheck
+        run: |
+          cd scripts/src
+          scripts=$(ls *sh)
+          status=0
+          for file in $scripts; do
+            shellcheck "$file"
+            if [ $status -eq 0 ]; then
+              status=$(($status + $?))
+            fi
+          done
+          exit $status

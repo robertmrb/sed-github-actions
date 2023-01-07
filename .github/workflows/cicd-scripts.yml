@@ -1,0 +1,12 @@
+name: cicd-scripts
+run-name: CI/CD pipeline for scripts
+on:
+  push:
+    paths:
+      - 'scripts/src/**'
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened]
+jobs:
+  shellcheck:
+    uses: ./.github/workflows/ci-shellcheck.yml

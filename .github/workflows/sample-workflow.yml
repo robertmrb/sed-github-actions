@@ -1,12 +1,42 @@
 name: sample-workflow
 run-name: Learning how to run workflow
-ok: [push]
+on: [push]
 jobs:
   test-workflow:
     runs-on: ubuntu-22.04
     steps:
       - name: Say Hello
         run: |
+          sleep 5
           echo -n "Hello "
           echo "Demo!"
-          
+      - name: This is step 2
+        run: |
+          sudo apt install python3 -y
+  building-workflow:
+    runs-on: vagrant-ubuntu
+    steps:
+      - name: Build app
+        run: | 
+          sleep 5
+          mkdir logs
+          echo "Building app.." > logs/status.log
+          echo "Done!" > logs/status2.log
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sample-artifact
+          path: |
+            logs/
+  release-workflow:
+    runs-on: self-hosted
+    needs: [test-workflow, building-workflow]
+    steps:
+      - name: Releasing app 
+        run: |
+          echo "Release done!"
+      - uses: actions/download-artifact@v3
+        with:
+          name: sample-artifact
+      - name: Check contents
+        run: |
+          ls -al
